@@ -1,0 +1,19 @@
+name:          complexity
+version:       0.1.0.0
+synopsis:      Code complexity checker for Python
+
+homepage:      https://codeq.io
+license:       BSD3
+license-file:  LICENSE
+author:        Mike Yumatov
+maintainer:    mike@yumatov.org
+
+build-type:    Simple
+cabal-version: >=1.8
+
+executable complexity
+  main-is:        Main.hs
+  hs-source-dirs: src
+  build-depends:
+    base,
+    language-python
