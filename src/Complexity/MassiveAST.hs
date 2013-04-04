@@ -4,17 +4,17 @@ module Complexity.MassiveAST where
 import Language.Python.Common.AST
 import Complexity.Massive
 
-instance Massive (Module a) where
+instance Massive ModuleSpan where
   mass coef (Module stmts) = mass coef stmts
 
-instance Massive (Statement a) where
+instance Massive StatementSpan where
   mass coef (While cond body else_ _) = Simple coef : masses
     where masses = concatMass3 (coef + 0.1) cond body else_
 
   mass coef (For targets gen body else_ _) = Simple coef : masses
     where masses = concatMass4 (coef + 0.1) targets gen body else_
 
-  mass coef (Fun (Ident name _) args annot body span) = [Func name masses]
+  mass coef (Fun (Ident name _) args annot body span) = [Func name masses span]
     where masses = concatMass3 coef args annot body
 
   mass coef (Class name args body _) = concatMass3 coef name args body
@@ -36,7 +36,7 @@ instance Massive (Statement a) where
 
   mass coef stmt = []
 
-instance Massive (Expr a) where
+instance Massive ExprSpan where
   mass coef (Call fun args _) = concatMass2 coef fun args
   mass coef (Subscript subs expr _) = concatMass2 coef subs expr
   mass coef (SlicedExpr slicee slices _) = concatMass2 coef slicee slices
@@ -58,59 +58,59 @@ instance Massive (Expr a) where
   mass coef (StringConversion expr _) = mass coef expr
   mass coef expr = [Simple coef]
 
-instance Massive (Decorator a) where
+instance Massive DecoratorSpan where
   mass coef (Decorator name args _) = concatMass2 coef name args
 
-instance Massive (Handler a) where
+instance Massive HandlerSpan where
   mass coef (Handler clause suite _) = concatMass2 coef clause suite
 
-instance Massive (ExceptClause a) where
+instance Massive ExceptClauseSpan where
   mass coef (ExceptClause clause _) = mass coef clause
 
-instance Massive (RaiseExpr a) where
+instance Massive RaiseExprSpan where
   mass coef (RaiseV3 raise) = mass coef raise
   mass coef (RaiseV2 raise) = mass coef raise
 
-instance Massive (Parameter a) where
+instance Massive ParameterSpan where
   mass coef (Param name annot dflt _) = concatMass3 coef name annot dflt
   mass coef (VarArgsPos name annot _) = concatMass2 coef name annot
   mass coef (VarArgsKeyword name annot _) = concatMass2 coef name annot
   mass coef (UnPackTuple tuple dflt _) = concatMass2 (coef + 0.1) tuple dflt
   mass coef (EndPositional _) = []
 
-instance Massive (Comprehension (Expr a) a) where
+instance Massive (ComprehensionSpan ExprSpan) where
   mass coef (Comprehension expr for _) = concatMass2 coef expr for
 
-instance Massive (Comprehension (Expr a, Expr a) a) where
+instance Massive (ComprehensionSpan (ExprSpan, ExprSpan)) where
   mass coef (Comprehension exprs for _) = concatMass2 coef exprs for
 
-instance Massive (CompFor a) where
+instance Massive CompForSpan where
   mass coef (CompFor exprs expr iter _) = concatMass3 coef exprs expr iter
 
-instance Massive (CompIter a) where
+instance Massive CompIterSpan where
   mass coef (IterFor for _) = mass coef for
   mass coef (IterIf if_ _) = mass coef if_
 
-instance Massive (CompIf a) where
+instance Massive CompIfSpan where
   mass coef (CompIf expr iter _) = concatMass2 coef expr iter
 
-instance Massive (Slice a) where
+instance Massive SliceSpan where
   mass coef (SliceProper lower upper stride _) = concatMass3 coef lower upper stride
   mass coef (SliceExpr expr _) = mass coef expr
   mass coef (SliceEllipsis _) = []
 
-instance Massive (Argument a) where
+instance Massive ArgumentSpan where
   mass coef (ArgExpr expr _) = mass coef expr
   mass coef (ArgVarArgsPos expr _) = mass coef expr
   mass coef (ArgVarArgsKeyword expr _) = mass coef expr
   mass coef (ArgKeyword keyword expr _) = concatMass2 coef keyword expr
 
-instance Massive (ParamTuple a) where
+instance Massive ParamTupleSpan where
   mass coef (ParamTupleName name _) = mass coef name
   mass coef (ParamTuple tuple _) = mass (coef + 0.1) tuple
 
-instance Massive (Op a) where
+instance Massive OpSpan where
   mass coef op = [Simple (coef * 0.5)]
 
-instance Massive (Ident a) where
+instance Massive IdentSpan where
   mass coef ident = [Simple coef]
