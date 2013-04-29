@@ -9,8 +9,10 @@ import Language.Python.Univer.Parser (parseModule)
 import Complexity.Massive
 import Complexity.MassiveAST
 
-funcs :: ModuleSpan -> [(String, Float, SrcSpan)]
-funcs m = foldl go [] (mass 1 m)
+type Msg = (String, Float, SrcSpan)
+
+msgs :: ModuleSpan -> [Msg]
+msgs m = foldl go [] (mass 1 m)
   where
     go acc (Func name masses span) = (name, calc masses, span) : acc
     go acc (Simple _) = acc
