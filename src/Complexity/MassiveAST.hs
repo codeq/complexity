@@ -24,7 +24,7 @@ instance Massive StatementSpan where
   mass coef (Conditional guards else_ _) = concatMass2 coef guards else_
   mass coef (Assign to expr _) = concatMass2 coef to expr
   mass coef (AugmentedAssign to _ expr _) = concatMass2 coef to expr
-  mass coef (Decorated decorators def _) = concatMass2 coef decorators def
+  mass coef (Decorated decorators def _) = Simple coef : concatMass2 coef decorators def
   mass coef (Return expr _) = mass coef expr
 
   mass coef (Try body excepts else_ finally _)
