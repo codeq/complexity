@@ -54,7 +54,10 @@ instance Massive ExprSpan where
   mass coef (Subscript subs expr _) = concatMass2 coef subs expr
   mass coef (SlicedExpr slicee slices _) = concatMass2 coef slicee slices
   mass coef (CondExpr true cond false _) = concatMass3 coef true cond false
-  mass coef (BinaryOp op left right _) = concatMass3 coef op left right
+
+  mass coef (BinaryOp _ left right _)
+    = Simple coef : concatMass2 (coef + 0.1) left right
+
   mass coef (UnaryOp _ expr _) = mass coef expr
   mass coef (Lambda args body _) = concatMass2 coef args body
   mass coef (Tuple exprs _) = mass coef exprs
@@ -121,9 +124,6 @@ instance Massive ArgumentSpan where
 instance Massive ParamTupleSpan where
   mass coef (ParamTupleName name _) = mass coef name
   mass coef (ParamTuple tuple _) = mass (coef + 0.1) tuple
-
-instance Massive OpSpan where
-  mass coef op = [Simple (coef * 0.5)]
 
 instance Massive IdentSpan where
   mass coef ident = [Simple coef]
