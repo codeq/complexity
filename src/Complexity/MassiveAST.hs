@@ -26,7 +26,14 @@ instance Massive StatementSpan where
   mass coef (AugmentedAssign to _ expr _) = concatMass2 coef to expr
   mass coef (Decorated decorators def _) = concatMass2 coef decorators def
   mass coef (Return expr _) = mass coef expr
-  mass coef (Try body excepts else_ finally _) = concatMass4 coef body excepts else_ finally
+
+  mass coef (Try body excepts else_ finally _)
+    = Simple (coef * branches) : concatMass4 (coef + 0.1) body excepts else_ finally
+    where
+      branches = 1 + exceptsCount + elseCount
+      exceptsCount = fromIntegral $ length excepts
+      elseCount = if null else_ then 0 else 1
+
   mass coef (Raise expr _) = mass coef expr
   mass coef (With context body _) = concatMass2 coef context body
   mass coef (Delete exprs _) = mass coef exprs
