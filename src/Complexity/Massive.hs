@@ -6,7 +6,8 @@ module Complexity.Massive (
 import Language.Python.Common.SrcLocation (SrcSpan)
 
 data Mass
-  = Func String [Mass] SrcSpan
+  = Cls String [Mass] SrcSpan
+  | Func String [Mass] SrcSpan
   | Simple Float
   deriving (Eq, Show)
 
