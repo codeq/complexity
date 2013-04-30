@@ -8,6 +8,7 @@ import Language.Python.Common.AST (ModuleSpan)
 import Language.Python.Common.SrcLocation (SrcSpan(..))
 import Language.Python.Univer.Parser (parseModule)
 
+import Complexity.Files
 import Complexity.Massive
 import Complexity.MassiveAST
 
@@ -43,9 +44,13 @@ msgToString (path, mass, span) = prefix (show row) (name ++ " (" ++ show mass ++
 prefix :: String -> String -> String
 prefix s1 s2 = s1 ++ ": " ++ s2
 
+scanFile :: String -> IO ()
+scanFile file = do
+  content <- getFixedContent file
+  case parseModule content file of
+    Left e -> error (file ++ ": " ++ show e)
+    Right (m, _) -> mapM_ (putStrLn . prefix file . msgToString) (moduleMsgs m)
+
 main = do
-  path   <- fmap head getArgs
-  source <- readFile path
-  case parseModule source path of
-    Left e -> error (path ++ ": " ++ show e)
-    Right (m, _) -> mapM_ (putStrLn . prefix path . msgToString) (moduleMsgs m)
+  files <- getArgs
+  mapM_ scanFile files
