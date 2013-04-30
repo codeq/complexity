@@ -110,20 +110,21 @@ instance Massive ParameterSpan where
   mass coef (EndPositional _) = []
 
 instance Massive (ComprehensionSpan ExprSpan) where
-  mass coef (Comprehension expr for _) = concatMass2 coef expr for
+  mass coef (Comprehension expr for _) = concatMass2 (coef + 0.1) expr for
 
 instance Massive (ComprehensionSpan (ExprSpan, ExprSpan)) where
-  mass coef (Comprehension exprs for _) = concatMass2 coef exprs for
+  mass coef (Comprehension exprs for _) = concatMass2 (coef + 0.1) exprs for
 
 instance Massive CompForSpan where
-  mass coef (CompFor exprs expr iter _) = concatMass3 coef exprs expr iter
+  mass coef (CompFor exprs expr iter _)
+    = Simple coef : concatMass3 (coef + 0.1) exprs expr iter
 
 instance Massive CompIterSpan where
   mass coef (IterFor for _) = mass coef for
   mass coef (IterIf if_ _) = mass coef if_
 
 instance Massive CompIfSpan where
-  mass coef (CompIf expr iter _) = concatMass2 coef expr iter
+  mass coef (CompIf expr iter _) = Simple coef : concatMass2 (coef + 0.1) expr iter
 
 instance Massive SliceSpan where
   mass coef (SliceProper lower upper stride _) = concatMass3 coef lower upper stride
