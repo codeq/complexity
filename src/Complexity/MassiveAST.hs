@@ -142,4 +142,4 @@ instance Massive ParamTupleSpan where
   mass coef (ParamTuple tuple _) = mass (coef + 0.1) tuple
 
 instance Massive IdentSpan where
-  mass coef ident = [Simple coef]
+  mass coef ident = [Simple (coef * 0.25)]
