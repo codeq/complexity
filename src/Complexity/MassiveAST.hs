@@ -69,7 +69,7 @@ instance Massive ExprSpan where
   mass coef (Starred expr _) = mass coef expr
   mass coef (Paren expr _) = mass coef expr
   mass coef (StringConversion expr _) = mass coef expr
-  mass coef expr = [Simple coef]
+  mass coef expr = [Simple (coef * 0.25)]
 
 instance Massive DecoratorSpan where
   mass coef (Decorator name args _) = concatMass2 coef name args
