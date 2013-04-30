@@ -21,7 +21,13 @@ instance Massive StatementSpan where
     where masses = concatMass3 coef args annot body
 
   mass coef (Class name args body _) = concatMass3 coef name args body
-  mass coef (Conditional guards else_ _) = concatMass2 coef guards else_
+
+  mass coef (Conditional guards else_ _)
+    = Simple (coef * branches) : concatMass2 (coef + 0.1) guards else_
+    where
+      branches = 1 + guardsCount
+      guardsCount = fromIntegral $ length guards
+
   mass coef (Assign to expr _) = Simple coef : concatMass2 coef to expr
   mass coef (AugmentedAssign to _ expr _) = Simple coef : concatMass2 coef to expr
   mass coef (Decorated decorators def _) = Simple coef : concatMass2 coef decorators def
