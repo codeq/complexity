@@ -53,7 +53,9 @@ instance Massive ExprSpan where
   mass coef (Call fun args _) = concatMass2 (coef + 0.2) fun args
   mass coef (Subscript subs expr _) = concatMass2 coef subs expr
   mass coef (SlicedExpr slicee slices _) = concatMass2 coef slicee slices
-  mass coef (CondExpr true cond false _) = concatMass3 coef true cond false
+
+  mass coef (CondExpr true cond false _)
+    = Simple (coef * 2) : concatMass3 (coef + 0.1) true cond false
 
   mass coef (BinaryOp _ left right _)
     = Simple coef : concatMass2 (coef + 0.1) left right
