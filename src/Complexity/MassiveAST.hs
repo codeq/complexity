@@ -55,7 +55,7 @@ instance Massive ExprSpan where
   mass coef (SlicedExpr slicee slices _) = concatMass2 coef slicee slices
   mass coef (CondExpr true cond false _) = concatMass3 coef true cond false
   mass coef (BinaryOp op left right _) = concatMass3 coef op left right
-  mass coef (UnaryOp op expr _) = concatMass2 coef op expr
+  mass coef (UnaryOp _ expr _) = mass coef expr
   mass coef (Lambda args body _) = concatMass2 coef args body
   mass coef (Tuple exprs _) = mass coef exprs
   mass coef (Yield expr _) = mass coef expr
