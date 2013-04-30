@@ -8,6 +8,9 @@ instance Massive ModuleSpan where
   mass coef (Module stmts) = mass coef stmts
 
 instance Massive StatementSpan where
+  mass coef (Import items _) = mass coef items
+  mass coef (FromImport _ items _) = mass coef items
+
   mass coef (While cond body else_ _) = Simple coef : masses
     where masses = concatMass3 (coef + 0.1) cond body else_
 
@@ -35,6 +38,16 @@ instance Massive StatementSpan where
   mass coef (Exec expr envs _) = concatMass2 coef expr envs
 
   mass coef stmt = []
+
+instance Massive ImportItemSpan where
+  mass coef (ImportItem name asname _) = concatMass2 coef name asname
+
+instance Massive FromItemsSpan where
+  mass coef (ImportEverything _) = [Simple coef]
+  mass coef (FromItems items _) = mass coef items
+
+instance Massive FromItemSpan where
+  mass coef (FromItem name asname _) = concatMass2 coef name asname
 
 instance Massive ExprSpan where
   mass coef (Call fun args _) = concatMass2 coef fun args
