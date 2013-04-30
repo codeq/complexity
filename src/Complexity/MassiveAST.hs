@@ -31,8 +31,8 @@ instance Massive StatementSpan where
   mass coef (With context body _) = concatMass2 coef context body
   mass coef (Delete exprs _) = mass coef exprs
   mass coef (StmtExpr expr _) = mass coef expr
-  mass coef (Global idents _) = mass coef idents
-  mass coef (NonLocal idents _) = mass coef idents
+  mass coef (Global idents _) = mass (coef + 0.1) idents
+  mass coef (NonLocal idents _) = mass (coef + 0.1) idents
   mass coef (Assert exprs _) = mass coef exprs
   mass coef (Print _ exprs _ _) = mass coef exprs
   mass coef (Exec expr envs _) = concatMass2 coef expr envs
