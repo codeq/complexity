@@ -44,13 +44,17 @@ msgToString (path, mass, span) = prefix (show row) (name ++ " (" ++ show mass ++
 prefix :: String -> String -> String
 prefix s1 s2 = s1 ++ ": " ++ s2
 
-scanFile :: String -> IO ()
-scanFile file = do
+scanFile :: Float -> String -> IO ()
+scanFile minmass file = do
   content <- getFixedContent file
   case parseModule content file of
     Left e -> error (file ++ ": " ++ show e)
-    Right (m, _) -> mapM_ (putStrLn . prefix file . msgToString) (moduleMsgs m)
+    Right (m, _) -> mapM_ printMsg $ filter isComplex $ moduleMsgs m
+  where
+    printMsg = putStrLn . prefix file . msgToString
+    isComplex = (> minmass) . (\(_, mass, _) -> mass)
 
 main = do
-  files <- getArgs
-  mapM_ scanFile files
+  minmass <- fmap head getArgs
+  files <- fmap tail getArgs
+  mapM_ (scanFile (read minmass)) files
