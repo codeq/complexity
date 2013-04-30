@@ -20,7 +20,8 @@ instance Massive StatementSpan where
   mass coef (Fun (Ident name _) args annot body span) = [Func name masses span]
     where masses = concatMass3 coef args annot body
 
-  mass coef (Class name args body _) = concatMass3 coef name args body
+  mass coef (Class name args body _)
+    = mass coef name ++ mass (coef + 1) args ++ mass coef body
 
   mass coef (Conditional guards else_ _)
     = Simple (coef * branches) : concatMass2 (coef + 0.1) guards else_
