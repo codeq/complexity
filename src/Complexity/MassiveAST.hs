@@ -50,7 +50,7 @@ instance Massive FromItemSpan where
   mass coef (FromItem name asname _) = concatMass2 coef name asname
 
 instance Massive ExprSpan where
-  mass coef (Call fun args _) = concatMass2 coef fun args
+  mass coef (Call fun args _) = concatMass2 (coef + 0.2) fun args
   mass coef (Subscript subs expr _) = concatMass2 coef subs expr
   mass coef (SlicedExpr slicee slices _) = concatMass2 coef slicee slices
   mass coef (CondExpr true cond false _) = concatMass3 coef true cond false
