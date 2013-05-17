@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleInstances #-}
 module Complexity.MassiveAST where
 
-import Language.Python.Common.AST
+import Language.Py.AST
 import Complexity.Massive
 
 instance Massive ModuleSpan where

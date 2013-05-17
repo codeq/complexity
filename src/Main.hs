@@ -4,9 +4,9 @@ import Control.Monad (mapM_)
 import Data.List (intercalate)
 import System.Environment (getArgs)
 
-import Language.Python.Common.AST (ModuleSpan)
-import Language.Python.Common.SrcLocation (SrcSpan(..))
-import Language.Python.Univer.Parser (parseModule)
+import Language.Py.AST (ModuleSpan)
+import Language.Py.SrcLocation (SrcSpan(..))
+import Language.Py.Parser (parseModule)
 
 import Complexity.Files
 import Complexity.Massive

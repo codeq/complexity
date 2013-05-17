@@ -3,7 +3,7 @@ module Complexity.Massive (
   module Complexity.Massive
 ) where
 
-import Language.Python.Common.SrcLocation (SrcSpan)
+import Language.Py.SrcLocation (SrcSpan)
 
 data Mass
   = Cls String [Mass] SrcSpan

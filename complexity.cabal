@@ -16,4 +16,4 @@ executable complexity
   hs-source-dirs: src
   build-depends:
     base,
-    language-python
+    language-py

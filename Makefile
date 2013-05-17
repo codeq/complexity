@@ -1,8 +1,8 @@
-vendor/language-python:
-	git clone https://github.com/codeq/language-python.git vendor/language-python
+vendor/language-py:
+	git clone https://github.com/codeq/language-py.git vendor/language-py
 
-deps: vendor/language-python
-	cabal-dev add-source vendor/language-python
+deps: vendor/language-py
+	cabal-dev add-source vendor/language-py
 	cabal-dev install --only-dependencies
 
 configure:
