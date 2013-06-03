@@ -15,9 +15,9 @@ msgToString (path, mass, span) = prefix (show row) (name ++ " (" ++ show mass ++
   where
     name = intercalate "." (reverse path)
     row = case span of
-      SpanCoLinear _ row _ _ -> row
-      SpanMultiLine _ row _ _ _ -> row
-      SpanPoint _ row _ -> row
+      SpanCoLinear {} -> spanRow span
+      SpanMultiLine {} -> spanStartRow span
+      SpanPoint {} -> spanRow span
       SpanEmpty -> 0
 
 prefix :: String -> String -> String
