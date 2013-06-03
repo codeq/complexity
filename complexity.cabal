@@ -17,3 +17,11 @@ executable complexity
   build-depends:
     base,
     language-py
+
+executable codeq-tools-complexity
+  main-is: Codeq.hs
+  hs-source-dirs: src
+  build-depends:
+    base,
+    json,
+    language-py
