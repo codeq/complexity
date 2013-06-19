@@ -5,10 +5,12 @@ module Complexity.Massive (
 
 import Language.Py.SrcLocation (SrcSpan)
 
+data Type = Branch | Assignment | Other deriving (Eq, Show)
+
 data Mass
   = Cls String [Mass] SrcSpan
   | Func String [Mass] SrcSpan
-  | Simple Float
+  | Simple Float Type
   deriving (Eq, Show)
 
 class Massive a where

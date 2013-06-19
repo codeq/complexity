@@ -11,10 +11,10 @@ instance Massive StatementSpan where
   mass coef (Import items _) = mass coef items
   mass coef (FromImport _ items _) = mass coef items
 
-  mass coef (While cond body else_ _) = Simple coef : masses
+  mass coef (While cond body else_ _) = Simple coef Branch : masses
     where masses = concatMass3 (coef + 0.1) cond body else_
 
-  mass coef (For targets gen body else_ _) = Simple coef : masses
+  mass coef (For targets gen body else_ _) = Simple coef Branch : masses
     where masses = concatMass4 (coef + 0.1) targets gen body else_
 
   mass coef (Fun (Ident name _) args annot body span) = [Func name masses span]
@@ -24,18 +24,18 @@ instance Massive StatementSpan where
     where masses = mass (coef + 1) args ++ mass coef body
 
   mass coef (Conditional guards else_ _)
-    = Simple (coef * branches) : concatMass2 (coef + 0.1) guards else_
+    = Simple (coef * branches) Branch : concatMass2 (coef + 0.1) guards else_
     where
       branches = 1 + guardsCount
       guardsCount = fromIntegral $ length guards
 
-  mass coef (Assign to expr _) = Simple coef : concatMass2 coef to expr
-  mass coef (AugmentedAssign to _ expr _) = Simple coef : concatMass2 coef to expr
-  mass coef (Decorated decorators def _) = Simple coef : concatMass2 coef decorators def
+  mass coef (Assign to expr _) = Simple coef Assignment : concatMass2 coef to expr
+  mass coef (AugmentedAssign to _ expr _) = Simple coef Assignment : concatMass2 coef to expr
+  mass coef (Decorated decorators def _) = Simple coef Other : concatMass2 coef decorators def
   mass coef (Return expr _) = mass coef expr
 
   mass coef (Try body excepts else_ finally _)
-    = Simple (coef * branches) : concatMass4 (coef + 0.1) body excepts else_ finally
+    = Simple (coef * branches) Branch : concatMass4 (coef + 0.1) body excepts else_ finally
     where
       branches = 1 + exceptsCount + elseCount
       exceptsCount = fromIntegral $ length excepts
@@ -57,7 +57,7 @@ instance Massive ImportItemSpan where
   mass coef (ImportItem name asname _) = concatMass2 coef name asname
 
 instance Massive FromItemsSpan where
-  mass coef (ImportEverything _) = [Simple coef]
+  mass coef (ImportEverything _) = [Simple coef Other]
   mass coef (FromItems items _) = mass coef items
 
 instance Massive FromItemSpan where
@@ -69,10 +69,10 @@ instance Massive ExprSpan where
   mass coef (SlicedExpr slicee slices _) = concatMass2 coef slicee slices
 
   mass coef (CondExpr true cond false _)
-    = Simple (coef * 2) : concatMass3 (coef + 0.1) true cond false
+    = Simple (coef * 2) Branch : concatMass3 (coef + 0.1) true cond false
 
   mass coef (BinaryOp _ left right _)
-    = Simple coef : concatMass2 (coef + 0.1) left right
+    = Simple coef Branch : concatMass2 (coef + 0.1) left right
 
   mass coef (UnaryOp _ expr _) = mass coef expr
   mass coef (Lambda args body _) = concatMass2 coef args body
@@ -88,7 +88,7 @@ instance Massive ExprSpan where
   mass coef (Starred expr _) = mass coef expr
   mass coef (Paren expr _) = mass coef expr
   mass coef (StringConversion expr _) = mass coef expr
-  mass coef expr = [Simple (coef * 0.25)]
+  mass coef expr = [Simple (coef * 0.25) Other]
 
 instance Massive DecoratorSpan where
   mass coef (Decorator name args _) = concatMass2 coef name args
@@ -118,14 +118,14 @@ instance Massive (ComprehensionSpan (ExprSpan, ExprSpan)) where
 
 instance Massive CompForSpan where
   mass coef (CompFor exprs expr iter _)
-    = Simple coef : concatMass3 (coef + 0.1) exprs expr iter
+    = Simple coef Branch : concatMass3 (coef + 0.1) exprs expr iter
 
 instance Massive CompIterSpan where
   mass coef (IterFor for _) = mass coef for
   mass coef (IterIf if_ _) = mass coef if_
 
 instance Massive CompIfSpan where
-  mass coef (CompIf expr iter _) = Simple coef : concatMass2 (coef + 0.1) expr iter
+  mass coef (CompIf expr iter _) = Simple coef Branch : concatMass2 (coef + 0.1) expr iter
 
 instance Massive SliceSpan where
   mass coef (SliceProper lower upper stride _) = concatMass3 coef lower upper stride
@@ -143,4 +143,4 @@ instance Massive ParamTupleSpan where
   mass coef (ParamTuple tuple _) = mass (coef + 0.1) tuple
 
 instance Massive IdentSpan where
-  mass coef ident = [Simple (coef * 0.25)]
+  mass coef ident = [Simple (coef * 0.25) Other]
